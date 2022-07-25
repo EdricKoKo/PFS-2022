@@ -1,0 +1,88 @@
+<HTML>
+<BODY>
+<h1>Member List</h1>
+
+  <p>Click<a href="MemberForm.html">  Register </a> to add New Member.</p>
+  
+ <table id="tblMembers" border="1">
+    <thead>
+      <tr>
+		<th>No</th>
+        <th>First Name</th>
+		<th>Last Name</th>
+        <th>Email</th>
+		<th>Contact Number</th>
+        <th>Address</th>
+		<th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+	
+    </tbody>
+  </table>
+  
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+<script type="text/javascript">
+   var emptyRow = "<tr><td colspan='7' class='text-center'> No Records Available</td></tr>";
+    
+   // Load Data
+   $(document).ready(function () {
+		  loadDataFromLocal();
+
+		  });
+		  
+  function loadDataFromLocal() {
+      let localData = localStorage.getItem('sampleMembersData');
+      if (localData) {
+        $("#tblMembers tbody").html("");
+        let Memebers = JSON.parse(localData);
+        let index = 1;
+        Memebers.forEach(element => {
+          let dynamicTR = "<tr>";
+          dynamicTR = dynamicTR + "<td> " + element.Index  + "</td>";
+          dynamicTR = dynamicTR + "<td>" + element.FName + "</td>";
+          dynamicTR = dynamicTR + "<td>" + element.LName + "</td>";
+          dynamicTR = dynamicTR + "<td>" + element.Email + "</td>";
+		  dynamicTR = dynamicTR + "<td>" + element.ContactNumber + "</td>";
+		  dynamicTR = dynamicTR + "<td>" + element.Address + "</td>";		   
+          dynamicTR = dynamicTR + "<td> <a href='#' OnClick='editMember("+ element.Index + ")' > Edit</a> , <a href='#' OnClick='deleteMember("+ element.Index + ")'> Delete </a></td>";
+          dynamicTR = dynamicTR + " </tr>";
+          $("#tblMembers tbody").append(dynamicTR);
+          index++;
+        });
+      }
+      addEmptyRow();
+    }
+ function addEmptyRow() {
+      if ($("#tblMembers tbody").children().children().length == 0) {
+        $("#tblMembers tbody").append(emptyRow);
+      }
+    }
+function deleteMember(id)
+{
+	if (confirm("Do you want to delete Member ID :"  + id + " ? " )) 
+	  {
+	  let localMemData = localStorage.getItem('sampleMembersData');
+      let localMemArray = JSON.parse(localMemData);
+	  
+      let i = 0;
+      while (i < localMemArray.length) {
+        if (localMemArray[i].Index == id) {
+          localMemArray.splice(i, 1); //remove from array
+        } else {
+          ++i;
+        }
+      }
+      localStorage.setItem('sampleMembersData', JSON.stringify(localMemArray));
+	  loadDataFromLocal();
+	 }
+}
+
+function editMember(id)
+{
+	url = "MemberForm.html?Id=" + id; // Create URL with parameter
+	window.location.href = url; 
+}
+   </script>
+</BODY>
+</HTML>

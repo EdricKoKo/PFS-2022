@@ -1,0 +1,145 @@
+<HTML>
+<BODY>
+<h1>Member Form</h1>
+<form method="POST" id="memberForm">
+ <table>
+ <tr>
+ <td> First Name</td>
+ <td><input type="text" id="txtfname" required="true"> </td>
+ </tr>
+ <tr>
+ <td> Last Name</td>
+ <td><input type="text" id="txtlname" required="true"> </td>
+ </tr>
+ <tr>
+ <td> Email </td>
+ <td><input type="email" id ="txtemail" required="true"> </td>
+  </tr>
+ <tr>
+  <td> Contact Number </td>
+ <td><input type="text" id ="txtcontactnumber" required="true"> </td>
+  </tr>
+ <tr>
+ 
+  <td> Address</td>
+ <td><input type="text" id ="txtaddress" required="true">  </td>
+ </tr>
+ </table>
+ <button type="button" onclick="doSave()">Save</button>
+ <button type="button" onclick="doCancel()">Cancel</button>
+</form>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+<script type="text/javascript">
+          
+
+
+	
+ // Load Data
+   $(document).ready(function () {
+		  loadEditData();
+		  });		   
+
+function  loadEditData()
+{
+	let url = new URL(window.location.href);
+	let searchParams = new URLSearchParams(url.search);
+	var parameterId = searchParams.get('Id');
+	if(parameterId !==null)
+	{
+		  let localMemData = localStorage.getItem('sampleMembersData');
+		  let localMemArray = JSON.parse(localMemData);		
+		  const MemRecord = localMemArray.find(m => m.Index == parameterId);
+		  if(MemRecord !== undefined)
+		  {		
+			  $("#txtfname").val(MemRecord.FName);
+			 $("#txtlname").val(MemRecord.LName);
+			 $("#txtemail").val(MemRecord.Email);
+			 $("#txtcontactnumber").val(MemRecord.ContactNumber);
+			 $("#txtaddress").val(MemRecord.Address);
+		  }
+	}
+}
+function doSave()
+{
+	//Get current URL to verify Edit or New 
+	let url = new URL(window.location.href);
+	let searchParams = new URLSearchParams(url.search);
+	var parameterId = searchParams.get('Id');
+	
+	if(parameterId ===null)
+	{
+		doNewSave();
+	}
+	else
+	{
+		doEditSave(parameterId);	
+	}
+	window.location.href = 'MemberList.html'; 
+}
+function doNewSave()
+{
+     var i = 1;
+	 var storedMembers = [];	
+			
+	if (localStorage.getItem("sampleMembersData") !== null) 
+		{
+			storedMembers = JSON.parse(localStorage.getItem("sampleMembersData"));
+			//i = storedMembers.length+1; //Index Increment
+			//let localMemArray = JSON.parse(localStorage.getItem("sampleMembersData"));
+			const LastRecord = storedMembers[storedMembers.length -1];
+			i = LastRecord.Index +1;
+		}	
+		
+		var fname =   $('#txtfname').val(); 
+		var lname = $('#txtlname').val(); 
+		var email = $('#txtemail').val();
+		var contactnumber = $('#txtcontactnumber').val();
+		var address = $('#txtaddress').val();
+
+		
+		const objMember = {
+			Index:i,
+		    FName: fname,
+		    LName: lname,
+		    Email: email,
+			ContactNumber: contactnumber,
+			Address: address
+		}
+		
+		//Add to local  variable  	
+		storedMembers.push(objMember);
+		
+		//Add to local storage
+		window.localStorage.setItem('sampleMembersData',JSON.stringify(storedMembers));
+
+}
+function doEditSave(Id)
+{
+		 
+		  let localMemData = localStorage.getItem('sampleMembersData');
+		  let localMemArray = JSON.parse(localMemData);
+		  
+			
+		  const MemRecord = localMemArray.find(m => m.Index == Id);
+		  if(MemRecord !== undefined)
+		  {		
+			MemRecord.FName = $("#txtfname").val();
+			MemRecord.LName = $("#txtlname").val();
+			MemRecord.Email = $("#txtemail").val();
+			MemRecord.ContactNumber = $("#txtcontactnumber").val();
+			MemRecord.Address = $("#txtaddress").val();
+			localStorage.setItem('sampleMembersData',JSON.stringify(localMemArray));
+		  }
+		  else{
+			alert("Invalid Record");
+		  }	  
+	
+}
+function doCancel()
+{
+	window.location.href = 'MemberList.html'; 
+	
+}	
+ </script>
+</BODY>
+</HTML>
